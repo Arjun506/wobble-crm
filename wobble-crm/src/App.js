@@ -1,9 +1,11 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
+
+// Pages
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import CaseRegister from './pages/CaseRegister';
@@ -18,88 +20,38 @@ import AdminDashboard from './pages/AdminDashboard';
 
 function App() {
   return (
-    <Router>
+    <BrowserRouter>
       <AuthProvider>
-        <Toaster position="top-right" />
+        <Toaster position="top-right" toastOptions={{ style: { background: '#1e293b', color: '#fff' } }} />
         <Routes>
-          {/* Login Route */}
           <Route path="/login" element={<Login />} />
-
-          {/* Default Route */}
           <Route path="/" element={<Navigate to="/dashboard" />} />
 
-          {/* Dashboard Route */}
-          <Route path="/dashboard" element={
-            <ProtectedRoute>
-              <Layout><Dashboard /></Layout>
-            </ProtectedRoute>
-          } />
+          {/* Common Routes */}
+          <Route path="/dashboard" element={<ProtectedRoute><Layout><Dashboard /></Layout></ProtectedRoute>} />
+          <Route path="/cases/search" element={<ProtectedRoute><Layout><SearchCase /></Layout></ProtectedRoute>} />
+          <Route path="/case/:id" element={<ProtectedRoute><Layout><CaseDetails /></Layout></ProtectedRoute>} />
 
-          {/* Case Register Route - Call Center, Service, Admin */}
-          <Route path="/cases/register" element={
-            <ProtectedRoute allowedRoles={['callcenter', 'service', 'admin']}>
-              <Layout><CaseRegister /></Layout>
-            </ProtectedRoute>
-          } />
+          {/* Call Center & Service */}
+          <Route path="/cases/register" element={<ProtectedRoute allowedRoles={['callcenter', 'service', 'admin']}><Layout><CaseRegister /></Layout></ProtectedRoute>} />
 
-          {/* Search Case Route - All Roles */}
-          <Route path="/cases/search" element={
-            <ProtectedRoute>
-              <Layout><SearchCase /></Layout>
-            </ProtectedRoute>
-          } />
+          {/* Service Center */}
+          <Route path="/service/case/:id" element={<ProtectedRoute allowedRoles={['service', 'admin']}><Layout><ServiceCaseDetail /></Layout></ProtectedRoute>} />
+          <Route path="/part-requests/new" element={<ProtectedRoute allowedRoles={['service', 'admin']}><Layout><PartRequestForm /></Layout></ProtectedRoute>} />
 
-          {/* Case Details Route - All Roles (View Case Details) */}
-          <Route path="/case/:id" element={
-            <ProtectedRoute>
-              <Layout><CaseDetails /></Layout>
-            </ProtectedRoute>
-          } />
+          {/* Admin Only */}
+          <Route path="/admin/approvals" element={<ProtectedRoute allowedRoles={['admin']}><Layout><PartRequestApproval /></Layout></ProtectedRoute>} />
+          <Route path="/admin/dashboard" element={<ProtectedRoute allowedRoles={['admin']}><Layout><AdminDashboard /></Layout></ProtectedRoute>} />
+          <Route path="/reports" element={<ProtectedRoute allowedRoles={['admin']}><Layout><Reports /></Layout></ProtectedRoute>} />
 
-          {/* Service Case Detail Route - Service Center Full Access */}
-          <Route path="/service/case/:id" element={
-            <ProtectedRoute allowedRoles={['service', 'admin']}>
-              <Layout><ServiceCaseDetail /></Layout>
-            </ProtectedRoute>
-          } />
+          {/* Warehouse */}
+          <Route path="/warehouse/dispatch" element={<ProtectedRoute allowedRoles={['warehouse', 'admin']}><Layout><WarehouseDispatch /></Layout></ProtectedRoute>} />
 
-          {/* Part Request Form Route - Service, Admin */}
-          <Route path="/part-requests/new" element={
-            <ProtectedRoute allowedRoles={['service', 'admin']}>
-              <Layout><PartRequestForm /></Layout>
-            </ProtectedRoute>
-          } />
-
-          {/* Part Request Approval Route - Admin Only */}
-          <Route path="/admin/approvals" element={
-            <ProtectedRoute allowedRoles={['admin']}>
-              <Layout><PartRequestApproval /></Layout>
-            </ProtectedRoute>
-          } />
-
-          {/* Warehouse Dispatch Route - Warehouse, Admin */}
-          <Route path="/warehouse/dispatch" element={
-            <ProtectedRoute allowedRoles={['warehouse', 'admin']}>
-              <Layout><WarehouseDispatch /></Layout>
-            </ProtectedRoute>
-          } />
-
-          {/* Reports Route - Admin Only */}
-          <Route path="/reports" element={
-            <ProtectedRoute allowedRoles={['admin']}>
-              <Layout><Reports /></Layout>
-            </ProtectedRoute>
-          } />
-
-          {/* Admin Dashboard Route - Admin Only */}
-          <Route path="/admin/dashboard" element={
-            <ProtectedRoute allowedRoles={['admin']}>
-              <Layout><AdminDashboard /></Layout>
-            </ProtectedRoute>
-          } />
+          {/* Fallback */}
+          <Route path="*" element={<Navigate to="/dashboard" />} />
         </Routes>
       </AuthProvider>
-    </Router>
+    </BrowserRouter>
   );
 }
 

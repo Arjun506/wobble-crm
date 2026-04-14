@@ -24,7 +24,6 @@ export function AuthProvider({ children }) {
                     setUser({ ...user, ...userData });
                     setRole(userData?.role || 'callcenter');
                 } catch (error) {
-                    console.error("Error fetching user role:", error);
                     setUser(user);
                     setRole('callcenter');
                 }
