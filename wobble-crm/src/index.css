@@ -1,0 +1,362 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-dark-900 text-gray-200 font-sans;
+  }
+}
+
+@layer components {
+
+  /* Cards */
+  .card {
+    @apply bg-dark-800/90 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-white/10;
+  }
+
+  /* Buttons */
+  .btn-primary {
+    @apply bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-2.5 px-5 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-[1.02];
+  }
+
+  .btn-secondary {
+    @apply bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2.5 px-5 rounded-xl transition-all duration-200;
+  }
+
+  .btn-danger {
+    @apply bg-red-600 hover:bg-red-700 text-white font-semibold py-2.5 px-5 rounded-xl transition-all duration-200;
+  }
+
+  .btn-success {
+    @apply bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 px-5 rounded-xl transition-all duration-200;
+  }
+
+  .btn-warning {
+    @apply bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-2.5 px-5 rounded-xl transition-all duration-200;
+  }
+
+  /* Input Fields */
+  .input-field {
+    @apply w-full px-4 py-2.5 bg-dark-700/50 border border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all;
+  }
+
+  .input-field-light {
+    @apply w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900;
+  }
+
+  /* Badges */
+  .badge {
+    @apply px-2.5 py-1 rounded-full text-xs font-semibold;
+  }
+
+  .badge-green {
+    @apply bg-green-500/20 text-green-400 border border-green-500/30;
+  }
+
+  .badge-yellow {
+    @apply bg-yellow-500/20 text-yellow-400 border border-yellow-500/30;
+  }
+
+  .badge-red {
+    @apply bg-red-500/20 text-red-400 border border-red-500/30;
+  }
+
+  .badge-blue {
+    @apply bg-blue-500/20 text-blue-400 border border-blue-500/30;
+  }
+
+  .badge-purple {
+    @apply bg-purple-500/20 text-purple-400 border border-purple-500/30;
+  }
+
+  .badge-gray {
+    @apply bg-gray-500/20 text-gray-400 border border-gray-500/30;
+  }
+
+  .badge-orange {
+    @apply bg-orange-500/20 text-orange-400 border border-orange-500/30;
+  }
+
+  /* Status Cards */
+  .stat-card {
+    @apply bg-gradient-to-br rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02];
+  }
+
+  .stat-card-blue {
+    @apply from-blue-600 to-blue-700;
+  }
+
+  .stat-card-green {
+    @apply from-green-600 to-green-700;
+  }
+
+  .stat-card-yellow {
+    @apply from-yellow-600 to-yellow-700;
+  }
+
+  .stat-card-red {
+    @apply from-red-600 to-red-700;
+  }
+
+  .stat-card-purple {
+    @apply from-purple-600 to-purple-700;
+  }
+
+  /* Tables */
+  .table-container {
+    @apply overflow-x-auto rounded-xl;
+  }
+
+  .table {
+    @apply w-full text-sm;
+  }
+
+  .table thead {
+    @apply border-b border-white/10;
+  }
+
+  .table th {
+    @apply text-left py-3 px-4 text-gray-400 font-medium;
+  }
+
+  .table td {
+    @apply py-3 px-4;
+  }
+
+  .table tbody tr {
+    @apply border-b border-white/5 hover:bg-white/5 transition;
+  }
+
+  /* Modals */
+  .modal-overlay {
+    @apply fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4;
+  }
+
+  .modal-content {
+    @apply bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl;
+  }
+
+  /* Loading Spinner */
+  .spinner {
+    @apply animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500;
+  }
+
+  /* Animations */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes pulse {
+
+    0%,
+    100% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  @keyframes bounce {
+
+    0%,
+    100% {
+      transform: translateY(-25%);
+      animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+    }
+
+    50% {
+      transform: translateY(0);
+      animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+    }
+  }
+
+  .animate-fadeIn {
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  .animate-pulse-slow {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .animate-bounce-slow {
+    animation: bounce 1s infinite;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-dark-700 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-500 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400;
+  }
+
+  /* Selection */
+  ::selection {
+    @apply bg-blue-500/30 text-white;
+  }
+}
+
+/* Utility Classes */
+.flex-center {
+  @apply flex items-center justify-center;
+}
+
+.flex-between {
+  @apply flex items-center justify-between;
+}
+
+.flex-start {
+  @apply flex items-center justify-start;
+}
+
+.flex-end {
+  @apply flex items-center justify-end;
+}
+
+.gap-1 {
+  gap: 0.25rem;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
+.gap-3 {
+  gap: 0.75rem;
+}
+
+.gap-4 {
+  gap: 1rem;
+}
+
+.gap-5 {
+  gap: 1.25rem;
+}
+
+.gap-6 {
+  gap: 1.5rem;
+}
+
+/* Responsive Text */
+.text-xs {
+  font-size: 0.75rem;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+}
+
+.text-base {
+  font-size: 1rem;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+}
+
+.text-xl {
+  font-size: 1.25rem;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+}
+
+.text-3xl {
+  font-size: 1.875rem;
+}
+
+.text-4xl {
+  font-size: 2.25rem;
+}
+
+/* Font Weights */
+.font-normal {
+  font-weight: 400;
+}
+
+.font-medium {
+  font-weight: 500;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+/* Colors */
+.text-white {
+  color: #ffffff;
+}
+
+.text-gray-300 {
+  color: #d1d5db;
+}
+
+.text-gray-400 {
+  color: #9ca3af;
+}
+
+.text-gray-500 {
+  color: #6b7280;
+}
+
+.text-blue-400 {
+  color: #60a5fa;
+}
+
+.text-green-400 {
+  color: #4ade80;
+}
+
+.text-yellow-400 {
+  color: #facc15;
+}
+
+.text-red-400 {
+  color: #f87171;
+}
+
+.text-purple-400 {
+  color: #c084fc;
+}
+
+.bg-dark-900 {
+  background-color: #0f172a;
+}
+
+.bg-dark-800 {
+  background-color: #1e293b;
+}
+
+.bg-dark-700 {
+  background-color: #334155;
+}
+
+.bg-dark-600 {
+  background-color: #475569;
+}
