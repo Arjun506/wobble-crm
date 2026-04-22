@@ -4,12 +4,7 @@ import { db } from '../firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import toast from 'react-hot-toast';
 import { useAuth } from '../contexts/AuthContext';
-import {
-    FiUser, FiPhone, FiMail, FiMapPin, FiPhoneCall,
-    FiCpu, FiEdit2, FiSave, FiX,
-    FiClock, FiPrinter, FiFileText, FiCalendar,
-    FiMessageSquare, FiDownload
-} from 'react-icons/fi';
+import { FiUser, FiPhone, FiMail, FiMapPin, FiPhoneCall, FiCpu, FiEdit2, FiSave, FiX, FiClock, FiPrinter, FiFileText, FiCalendar, FiMessageSquare, FiDownload } from 'react-icons/fi';
 
 export default function CaseDetails() {
     const { id } = useParams();
@@ -87,7 +82,7 @@ export default function CaseDetails() {
             text: newNote,
             date: new Date().toISOString(),
             author: role,
-            authorName: user?.email?.split('@')[0] || role
+            authorName: user?.email?.split('@')[0] || (role === 'service' ? 'Service Engineer' : 'Call Center Agent')
         }];
         try {
             await updateDoc(doc(db, 'cases', id), { jobNotes: updatedNotes });
@@ -195,11 +190,7 @@ export default function CaseDetails() {
     };
 
     if (loading) {
-        return (
-            <div className="flex justify-center items-center h-64">
-                <div className="loading-spinner"></div>
-            </div>
-        );
+        return <div className="flex justify-center items-center h-64"><div className="loading-spinner"></div></div>;
     }
 
     if (!caseData) return null;
@@ -212,15 +203,11 @@ export default function CaseDetails() {
                     <div>
                         <div className="flex items-center gap-3 flex-wrap">
                             <h2 className="text-2xl font-bold text-white">Case Details</h2>
-                            <span className={`badge ${getStatusBadge(caseData.jobStatus)}`}>
-                                {caseData.jobStatus}
-                            </span>
+                            <span className={`badge ${getStatusBadge(caseData.jobStatus)}`}>{caseData.jobStatus}</span>
                         </div>
                         <div className="mt-3">
                             <p className="text-slate-400 text-sm">Case ID:</p>
-                            <p className="text-2xl font-bold font-mono bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
-                                {caseData.jobId}
-                            </p>
+                            <p className="text-2xl font-bold font-mono bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">{caseData.jobId}</p>
                         </div>
                         <div className="flex items-center gap-4 mt-2 text-sm text-slate-400">
                             <span className="flex items-center gap-1"><FiCalendar size={14} /> Registered: {new Date(caseData.caseRegisterDate).toLocaleDateString()}</span>
@@ -228,16 +215,10 @@ export default function CaseDetails() {
                         </div>
                     </div>
                     <div className="flex gap-3">
-                        <button onClick={() => setShowReceipt(true)} className="btn-secondary flex items-center gap-2 text-sm">
-                            <FiPrinter /> Receipt
-                        </button>
-                        <button onClick={() => setShowJobReport(true)} className="btn-secondary flex items-center gap-2 text-sm">
-                            <FiFileText /> Job Report
-                        </button>
+                        <button onClick={() => setShowReceipt(true)} className="btn-secondary flex items-center gap-2 text-sm"><FiPrinter /> Receipt</button>
+                        <button onClick={() => setShowJobReport(true)} className="btn-secondary flex items-center gap-2 text-sm"><FiFileText /> Job Report</button>
                         {role === 'admin' && (
-                            <button onClick={() => navigate('/reports')} className="btn-primary flex items-center gap-2 text-sm">
-                                <FiDownload /> Export
-                            </button>
+                            <button onClick={() => navigate('/reports')} className="btn-primary flex items-center gap-2 text-sm"><FiDownload /> Export</button>
                         )}
                     </div>
                 </div>
@@ -248,13 +229,9 @@ export default function CaseDetails() {
                     {/* Customer Card */}
                     <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-slate-700">
                         <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-xl font-semibold text-gray-800 dark:text-white flex items-center gap-2">
-                                <FiUser className="text-blue-500" /> Customer Information
-                            </h3>
+                            <h3 className="text-xl font-semibold text-gray-800 dark:text-white flex items-center gap-2"><FiUser className="text-blue-500" /> Customer Information</h3>
                             {!isEditing && (role === 'admin' || role === 'callcenter') && (
-                                <button onClick={handleEdit} className="text-blue-600 dark:text-blue-400 hover:text-blue-700 flex items-center gap-1 text-sm">
-                                    <FiEdit2 size={14} /> Edit
-                                </button>
+                                <button onClick={handleEdit} className="text-blue-600 dark:text-blue-400 hover:text-blue-700 flex items-center gap-1 text-sm"><FiEdit2 size={14} /> Edit</button>
                             )}
                         </div>
                         {isEditing ? (
@@ -275,39 +252,18 @@ export default function CaseDetails() {
                             </div>
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-slate-800/50 rounded-xl">
-                                    <FiUser className="text-blue-500 mt-1" />
-                                    <div><p className="text-gray-500 dark:text-slate-400 text-xs">Full Name</p><p className="font-semibold text-gray-800 dark:text-white">{caseData.customerName}</p></div>
-                                </div>
-                                <div className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-slate-800/50 rounded-xl">
-                                    <FiPhone className="text-green-500 mt-1" />
-                                    <div><p className="text-gray-500 dark:text-slate-400 text-xs">Mobile</p><p className="text-gray-800 dark:text-white">{caseData.mobileNumber}</p></div>
-                                </div>
-                                {caseData.alternateNumber && (
-                                    <div className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-slate-800/50 rounded-xl">
-                                        <FiPhoneCall className="text-yellow-500 mt-1" />
-                                        <div><p className="text-gray-500 dark:text-slate-400 text-xs">Alternate</p><p className="text-gray-800 dark:text-white">{caseData.alternateNumber}</p></div>
-                                    </div>
-                                )}
-                                {caseData.email && (
-                                    <div className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-slate-800/50 rounded-xl">
-                                        <FiMail className="text-purple-500 mt-1" />
-                                        <div><p className="text-gray-500 dark:text-slate-400 text-xs">Email</p><p className="text-gray-800 dark:text-white">{caseData.email}</p></div>
-                                    </div>
-                                )}
-                                <div className="md:col-span-2 flex items-start gap-3 p-3 bg-gray-50 dark:bg-slate-800/50 rounded-xl">
-                                    <FiMapPin className="text-red-500 mt-1" />
-                                    <div><p className="text-gray-500 dark:text-slate-400 text-xs">Address</p><p className="text-gray-800 dark:text-white">{caseData.addressLocality ? `${caseData.addressLocality}, ` : ''}{caseData.addressCity || ''}{caseData.addressPin ? ` - ${caseData.addressPin}` : ''}</p></div>
-                                </div>
+                                <div className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-slate-800/50 rounded-xl"><FiUser className="text-blue-500 mt-1" /><div><p className="text-gray-500 dark:text-slate-400 text-xs">Full Name</p><p className="font-semibold text-gray-800 dark:text-white">{caseData.customerName}</p></div></div>
+                                <div className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-slate-800/50 rounded-xl"><FiPhone className="text-green-500 mt-1" /><div><p className="text-gray-500 dark:text-slate-400 text-xs">Mobile</p><p className="text-gray-800 dark:text-white">{caseData.mobileNumber}</p></div></div>
+                                {caseData.alternateNumber && <div className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-slate-800/50 rounded-xl"><FiPhoneCall className="text-yellow-500 mt-1" /><div><p className="text-gray-500 dark:text-slate-400 text-xs">Alternate</p><p className="text-gray-800 dark:text-white">{caseData.alternateNumber}</p></div></div>}
+                                {caseData.email && <div className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-slate-800/50 rounded-xl"><FiMail className="text-purple-500 mt-1" /><div><p className="text-gray-500 dark:text-slate-400 text-xs">Email</p><p className="text-gray-800 dark:text-white">{caseData.email}</p></div></div>}
+                                <div className="md:col-span-2 flex items-start gap-3 p-3 bg-gray-50 dark:bg-slate-800/50 rounded-xl"><FiMapPin className="text-red-500 mt-1" /><div><p className="text-gray-500 dark:text-slate-400 text-xs">Address</p><p className="text-gray-800 dark:text-white">{caseData.addressLocality ? `${caseData.addressLocality}, ` : ''}{caseData.addressCity || ''}{caseData.addressPin ? ` - ${caseData.addressPin}` : ''}</p></div></div>
                             </div>
                         )}
                     </div>
 
                     {/* Device & Issue Card */}
                     <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-slate-700">
-                        <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
-                            <FiCpu className="text-purple-500" /> Device & Issue
-                        </h3>
+                        <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2"><FiCpu className="text-purple-500" /> Device & Issue</h3>
                         <div className="grid grid-cols-2 gap-4">
                             <div><p className="text-gray-500 dark:text-slate-400 text-xs">Model</p><p className="font-medium text-gray-800 dark:text-white">{caseData.deviceModel || 'N/A'}</p></div>
                             <div><p className="text-gray-500 dark:text-slate-400 text-xs">Variant</p><p className="text-gray-800 dark:text-white">{caseData.deviceVariant || 'N/A'}</p></div>
@@ -325,9 +281,7 @@ export default function CaseDetails() {
                 <div className="space-y-6">
                     {/* Service Center Card */}
                     <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-slate-700">
-                        <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-3 flex items-center gap-2">
-                            🏢 Service Center
-                        </h3>
+                        <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-3 flex items-center gap-2">🏢 Service Center</h3>
                         <div className="space-y-2 text-sm">
                             <div className="flex justify-between"><span className="text-gray-500 dark:text-slate-400">Center ID:</span><span className="font-mono text-gray-800 dark:text-white">{caseData.serviceCenterId || 'SC-WBL-001'}</span></div>
                             <div className="flex justify-between"><span className="text-gray-500 dark:text-slate-400">Center Name:</span><span className="text-gray-800 dark:text-white">{caseData.serviceCenterName || 'Wobble One Main Center'}</span></div>
@@ -335,17 +289,15 @@ export default function CaseDetails() {
                         </div>
                     </div>
 
-                    {/* Job Notes Card */}
-                    <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-slate-700">
-                        <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-3 flex items-center gap-2">
-                            <FiMessageSquare className="text-blue-500" /> Job Notes
-                        </h3>
+                    {/* Job Notes Card - Lighter background */}
+                    <div className="bg-amber-50 dark:bg-amber-900/20 rounded-2xl shadow-lg p-6 border border-amber-200 dark:border-amber-700/30">
+                        <h3 className="text-lg font-semibold text-amber-800 dark:text-amber-300 mb-3 flex items-center gap-2"><FiMessageSquare className="text-amber-600" /> Job Notes</h3>
                         <div className="space-y-3 max-h-64 overflow-y-auto">
                             {caseData.jobNotes && caseData.jobNotes.length > 0 ? (
                                 caseData.jobNotes.map((note, idx) => (
-                                    <div key={note.id || idx} className="p-3 bg-gray-50 dark:bg-slate-800/50 rounded-xl">
-                                        <div className="flex justify-between text-xs text-blue-600 dark:text-blue-400 mb-1">
-                                            <span>{note.authorName || note.author}</span>
+                                    <div key={note.id || idx} className="p-3 bg-white dark:bg-slate-800/50 rounded-xl shadow-sm border border-amber-100 dark:border-amber-800/30">
+                                        <div className="flex justify-between text-xs text-amber-700 dark:text-amber-400 mb-1">
+                                            <span className="font-medium">{note.authorName || note.author}</span>
                                             <span>{new Date(note.date).toLocaleString()}</span>
                                         </div>
                                         <p className="text-sm text-gray-700 dark:text-gray-300">{note.text}</p>
@@ -368,9 +320,7 @@ export default function CaseDetails() {
                             <button onClick={handlePrintReceipt} className="w-full btn-secondary text-sm flex items-center justify-center gap-2"><FiPrinter /> Print Receipt</button>
                             <button onClick={handlePrintJobReport} className="w-full btn-secondary text-sm flex items-center justify-center gap-2"><FiFileText /> Print Job Report</button>
                             {role === 'admin' && (
-                                <button onClick={() => navigate('/reports')} className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-xl text-sm flex items-center justify-center gap-2">
-                                    <FiDownload /> Export Data
-                                </button>
+                                <button onClick={() => navigate('/reports')} className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-xl text-sm flex items-center justify-center gap-2"><FiDownload /> Export Data</button>
                             )}
                         </div>
                     </div>
@@ -381,35 +331,9 @@ export default function CaseDetails() {
             {showReceipt && (
                 <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
                     <div className="bg-white rounded-2xl max-w-md w-full overflow-hidden shadow-2xl">
-                        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-4 text-white">
-                            <div className="flex justify-between items-center">
-                                <h2 className="text-xl font-bold">Service Receipt</h2>
-                                <button onClick={() => setShowReceipt(false)} className="text-white/80 hover:text-white"><FiX size={24} /></button>
-                            </div>
-                        </div>
-                        <div className="p-6">
-                            <div className="text-center mb-4">
-                                <div className="text-4xl mb-2">🔄</div>
-                                <p className="font-bold text-gray-800">Wobble One CRM</p>
-                                <p className="text-xs text-gray-500">Service Receipt</p>
-                            </div>
-                            <div className="border-t border-b border-gray-200 py-4 my-4">
-                                <div className="space-y-2 text-gray-800">
-                                    <div className="flex justify-between"><span className="font-semibold">Case ID:</span><span className="font-mono">{caseData.jobId}</span></div>
-                                    <div className="flex justify-between"><span className="font-semibold">Date:</span><span>{new Date().toLocaleString()}</span></div>
-                                    <div className="flex justify-between"><span className="font-semibold">Customer:</span><span>{caseData.customerName}</span></div>
-                                    <div className="flex justify-between"><span className="font-semibold">Mobile:</span><span>{caseData.mobileNumber}</span></div>
-                                    <div className="flex justify-between"><span className="font-semibold">Device:</span><span>{caseData.deviceModel || 'N/A'}</span></div>
-                                    <div className="flex justify-between"><span className="font-semibold">Issue:</span><span>{caseData.issueType || 'N/A'}</span></div>
-                                    <div className="flex justify-between"><span className="font-semibold">Status:</span><span className="text-green-600">{caseData.jobStatus}</span></div>
-                                </div>
-                            </div>
-                            <div className="text-center text-xs text-gray-500">Thank you for choosing Wobble One Service</div>
-                        </div>
-                        <div className="p-4 bg-gray-50 flex gap-3">
-                            <button onClick={handlePrintReceipt} className="flex-1 bg-blue-600 text-white py-2 rounded-xl">Print</button>
-                            <button onClick={() => setShowReceipt(false)} className="flex-1 bg-gray-200 text-gray-800 py-2 rounded-xl">Close</button>
-                        </div>
+                        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-4 text-white"><div className="flex justify-between"><h2 className="text-xl font-bold">Service Receipt</h2><button onClick={() => setShowReceipt(false)}><FiX size={24} /></button></div></div>
+                        <div className="p-6"><div className="text-center mb-4"><div className="text-4xl mb-2">🔄</div><p className="font-bold text-gray-800">Wobble One CRM</p><p className="text-xs text-gray-500">Service Receipt</p></div><div className="border-t border-b border-gray-200 py-4 my-4"><div className="space-y-2 text-gray-800"><div className="flex justify-between"><span className="font-semibold">Case ID:</span><span className="font-mono">{caseData.jobId}</span></div><div className="flex justify-between"><span className="font-semibold">Customer:</span><span>{caseData.customerName}</span></div><div className="flex justify-between"><span className="font-semibold">Mobile:</span><span>{caseData.mobileNumber}</span></div><div className="flex justify-between"><span className="font-semibold">Device:</span><span>{caseData.deviceModel || 'N/A'}</span></div><div className="flex justify-between"><span className="font-semibold">Status:</span><span className="text-green-600">{caseData.jobStatus}</span></div></div></div><div className="text-center text-xs text-gray-500">Thank you for choosing Wobble One Service</div></div>
+                        <div className="p-4 bg-gray-50 flex gap-3"><button onClick={handlePrintReceipt} className="flex-1 bg-blue-600 text-white py-2 rounded-xl">Print</button><button onClick={() => setShowReceipt(false)} className="flex-1 bg-gray-200 text-gray-800 py-2 rounded-xl">Close</button></div>
                     </div>
                 </div>
             )}
@@ -418,27 +342,9 @@ export default function CaseDetails() {
             {showJobReport && (
                 <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
                     <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto shadow-2xl">
-                        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-4 text-white sticky top-0">
-                            <div className="flex justify-between items-center">
-                                <h2 className="text-xl font-bold">Job Report</h2>
-                                <button onClick={() => setShowJobReport(false)} className="text-white/80 hover:text-white"><FiX size={24} /></button>
-                            </div>
-                        </div>
-                        <div className="p-6">
-                            <div className="text-center mb-6"><div className="text-4xl">🔄</div><p className="font-bold text-xl text-gray-800">Wobble One CRM</p><p className="text-gray-500">Job Report</p></div>
-                            <div className="grid grid-cols-2 gap-4 mb-6">
-                                <div className="bg-gray-50 p-3 rounded-lg"><p className="text-gray-500 text-xs">Job ID</p><p className="font-mono font-bold text-gray-800">{caseData.jobId}</p></div>
-                                <div className="bg-gray-50 p-3 rounded-lg"><p className="text-gray-500 text-xs">Status</p><p className="font-semibold text-green-600">{caseData.jobStatus}</p></div>
-                                <div className="bg-gray-50 p-3 rounded-lg"><p className="text-gray-500 text-xs">Registered Date</p><p className="text-gray-800">{new Date(caseData.caseRegisterDate).toLocaleString()}</p></div>
-                                <div className="bg-gray-50 p-3 rounded-lg"><p className="text-gray-500 text-xs">Case Age</p><p className="text-gray-800">{calculateDaysOld()} days</p></div>
-                            </div>
-                            <div className="mb-6"><h3 className="font-semibold text-gray-800 mb-2">Customer Details</h3><div className="grid grid-cols-2 gap-3 text-sm"><div><p className="text-gray-500">Name</p><p className="font-medium">{caseData.customerName}</p></div><div><p className="text-gray-500">Mobile</p><p>{caseData.mobileNumber}</p></div><div><p className="text-gray-500">Email</p><p>{caseData.email || 'N/A'}</p></div><div><p className="text-gray-500">Address</p><p>{caseData.addressLocality || ''} {caseData.addressCity || ''}</p></div></div></div>
-                            <div><h3 className="font-semibold text-gray-800 mb-2">Device & Issue</h3><div className="grid grid-cols-2 gap-3 text-sm"><div><p className="text-gray-500">Device Model</p><p>{caseData.deviceModel || 'N/A'}</p></div><div><p className="text-gray-500">IMEI</p><p>{caseData.imei1 || 'N/A'}</p></div><div><p className="text-gray-500">Warranty</p><p>{caseData.warranty || 'Unknown'}</p></div><div><p className="text-gray-500">Issue</p><p>{caseData.issueType || 'N/A'}</p></div></div></div>
-                        </div>
-                        <div className="p-4 bg-gray-50 flex gap-3 sticky bottom-0">
-                            <button onClick={handlePrintJobReport} className="flex-1 bg-blue-600 text-white py-2 rounded-xl">Print Report</button>
-                            <button onClick={() => setShowJobReport(false)} className="flex-1 bg-gray-200 text-gray-800 py-2 rounded-xl">Close</button>
-                        </div>
+                        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-4 text-white sticky top-0"><div className="flex justify-between"><h2 className="text-xl font-bold">Job Report</h2><button onClick={() => setShowJobReport(false)}><FiX size={24} /></button></div></div>
+                        <div className="p-6"><div className="text-center mb-6"><div className="text-4xl">🔄</div><p className="font-bold text-xl text-gray-800">Wobble One CRM</p><p className="text-gray-500">Job Report</p></div><div className="grid grid-cols-2 gap-4 mb-6"><div className="bg-gray-50 p-3 rounded-lg"><p className="text-gray-500 text-xs">Job ID</p><p className="font-mono font-bold text-gray-800">{caseData.jobId}</p></div><div className="bg-gray-50 p-3 rounded-lg"><p className="text-gray-500 text-xs">Status</p><p className="font-semibold text-green-600">{caseData.jobStatus}</p></div><div className="bg-gray-50 p-3 rounded-lg"><p className="text-gray-500 text-xs">Registered Date</p><p className="text-gray-800">{new Date(caseData.caseRegisterDate).toLocaleString()}</p></div><div className="bg-gray-50 p-3 rounded-lg"><p className="text-gray-500 text-xs">Case Age</p><p className="text-gray-800">{calculateDaysOld()} days</p></div></div><div className="mb-6"><h3 className="font-semibold text-gray-800 mb-2">Customer Details</h3><div className="grid grid-cols-2 gap-3 text-sm"><div><p className="text-gray-500">Name</p><p className="font-medium">{caseData.customerName}</p></div><div><p className="text-gray-500">Mobile</p><p>{caseData.mobileNumber}</p></div><div><p className="text-gray-500">Email</p><p>{caseData.email || 'N/A'}</p></div><div><p className="text-gray-500">Address</p><p>{caseData.addressLocality || ''} {caseData.addressCity || ''}</p></div></div></div><div><h3 className="font-semibold text-gray-800 mb-2">Device & Issue</h3><div className="grid grid-cols-2 gap-3 text-sm"><div><p className="text-gray-500">Device Model</p><p>{caseData.deviceModel || 'N/A'}</p></div><div><p className="text-gray-500">IMEI</p><p>{caseData.imei1 || 'N/A'}</p></div><div><p className="text-gray-500">Warranty</p><p>{caseData.warranty || 'Unknown'}</p></div><div><p className="text-gray-500">Issue</p><p>{caseData.issueType || 'N/A'}</p></div></div></div></div>
+                        <div className="p-4 bg-gray-50 flex gap-3 sticky bottom-0"><button onClick={handlePrintJobReport} className="flex-1 bg-blue-600 text-white py-2 rounded-xl">Print Report</button><button onClick={() => setShowJobReport(false)} className="flex-1 bg-gray-200 text-gray-800 py-2 rounded-xl">Close</button></div>
                     </div>
                 </div>
             )}
@@ -449,10 +355,7 @@ export default function CaseDetails() {
                     <div className="bg-white dark:bg-slate-800 rounded-2xl max-w-md w-full p-6">
                         <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4">Add Job Note</h3>
                         <textarea rows="4" className="input-field mb-4" placeholder="Enter note..." value={newNote} onChange={e => setNewNote(e.target.value)} />
-                        <div className="flex gap-3">
-                            <button onClick={handleAddNote} className="btn-primary flex-1">Add</button>
-                            <button onClick={() => setShowNotesModal(false)} className="btn-secondary flex-1">Cancel</button>
-                        </div>
+                        <div className="flex gap-3"><button onClick={handleAddNote} className="btn-primary flex-1">Add</button><button onClick={() => setShowNotesModal(false)} className="btn-secondary flex-1">Cancel</button></div>
                     </div>
                 </div>
             )}

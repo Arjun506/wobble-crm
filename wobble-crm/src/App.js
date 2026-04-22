@@ -17,6 +17,8 @@ import PartRequestApproval from './pages/PartRequestApproval';
 import WarehouseDispatch from './pages/WarehouseDispatch';
 import Reports from './pages/Reports';
 import AdminDashboard from './pages/AdminDashboard';
+import SalesActivation from './pages/SalesActivation';
+import CallCenterWarranty from './pages/CallCenterWarranty';
 
 function App() {
   return (
@@ -46,6 +48,12 @@ function App() {
 
           {/* Warehouse */}
           <Route path="/warehouse/dispatch" element={<ProtectedRoute allowedRoles={['warehouse', 'admin']}><Layout><WarehouseDispatch /></Layout></ProtectedRoute>} />
+
+          {/* Sales */}
+          <Route path="/sales/activation" element={<ProtectedRoute allowedRoles={['sales', 'admin']}><Layout><SalesActivation /></Layout></ProtectedRoute>} />
+
+          {/* Call Center */}
+          <Route path="/callcenter/warranty" element={<ProtectedRoute allowedRoles={['callcenter', 'admin']}><Layout><CallCenterWarranty /></Layout></ProtectedRoute>} />
 
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/dashboard" />} />
