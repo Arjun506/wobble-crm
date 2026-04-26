@@ -3,7 +3,7 @@ import { db } from '../firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import * as XLSX from 'xlsx';
 import toast from 'react-hot-toast';
-import { FiDownload, FiRefreshCw, FiBarChart2 } from 'react-icons/fi';
+import { FiDownload, FiRefreshCw } from 'react-icons/fi';
 
 export default function Reports() {
     const [cases, setCases] = useState([]);
@@ -65,22 +65,22 @@ export default function Reports() {
     return (
         <div>
             <div className="mb-6">
-                <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">Reports & Analytics</h2>
-                <p className="text-slate-400 mt-1">Export data and view statistics</p>
+                <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Reports & Analytics</h2>
+                <p className="text-gray-500 mt-1">Export data and view statistics</p>
             </div>
 
             {/* Stats Cards */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                <div className="card text-center"><p className="text-2xl font-bold text-blue-400">{cases.length}</p><p className="text-slate-400 text-sm">Total Cases</p></div>
-                <div className="card text-center"><p className="text-2xl font-bold text-green-400">{getStatusCount('Open')}</p><p className="text-slate-400 text-sm">Open Cases</p></div>
-                <div className="card text-center"><p className="text-2xl font-bold text-yellow-400">{getStatusCount('In Progress')}</p><p className="text-slate-400 text-sm">In Progress</p></div>
-                <div className="card text-center"><p className="text-2xl font-bold text-purple-400">{partRequests.filter(p => p.status === 'Pending Approval').length}</p><p className="text-slate-400 text-sm">Pending Approvals</p></div>
+                <div className="card text-center"><p className="text-2xl font-bold text-blue-600">{cases.length}</p><p className="text-gray-500 text-sm">Total Cases</p></div>
+                <div className="card text-center"><p className="text-2xl font-bold text-green-600">{getStatusCount('Open')}</p><p className="text-gray-500 text-sm">Open Cases</p></div>
+                <div className="card text-center"><p className="text-2xl font-bold text-yellow-600">{getStatusCount('In Progress')}</p><p className="text-gray-500 text-sm">In Progress</p></div>
+                <div className="card text-center"><p className="text-2xl font-bold text-purple-600">{partRequests.filter(p => p.status === 'Pending Approval').length}</p><p className="text-gray-500 text-sm">Pending Approvals</p></div>
             </div>
 
             {/* Tabs */}
-            <div className="flex gap-4 border-b border-slate-700 mb-6">
-                <button onClick={() => setActiveTab('cases')} className={`pb-2 px-1 font-semibold ${activeTab === 'cases' ? 'text-blue-400 border-b-2 border-blue-400' : 'text-slate-400'}`}>Cases</button>
-                <button onClick={() => setActiveTab('parts')} className={`pb-2 px-1 font-semibold ${activeTab === 'parts' ? 'text-blue-400 border-b-2 border-blue-400' : 'text-slate-400'}`}>Part Requests</button>
+            <div className="flex gap-4 border-b border-gray-200 mb-6">
+                <button onClick={() => setActiveTab('cases')} className={`pb-2 px-1 font-semibold ${activeTab === 'cases' ? 'text-blue-600 border-b-2 border-blue-400' : 'text-gray-500'}`}>Cases</button>
+                <button onClick={() => setActiveTab('parts')} className={`pb-2 px-1 font-semibold ${activeTab === 'parts' ? 'text-blue-600 border-b-2 border-blue-400' : 'text-gray-500'}`}>Part Requests</button>
             </div>
 
             {/* Cases Table */}
@@ -103,7 +103,7 @@ export default function Reports() {
                                     ))}
                                 </tbody>
                             </table>
-                            {cases.length > 50 && <p className="text-center text-slate-500 text-sm mt-4">Showing first 50 of {cases.length}</p>}
+                            {cases.length > 50 && <p className="text-center text-gray-500 text-sm mt-4">Showing first 50 of {cases.length}</p>}
                         </div>
                     }
                     <button onClick={() => exportToExcel(casesForExport, 'cases_report')} className="btn-primary mt-4 flex items-center gap-2 justify-center"><FiDownload /> Export to Excel</button>

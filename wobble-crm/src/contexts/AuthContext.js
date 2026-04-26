@@ -36,16 +36,32 @@ export function AuthProvider({ children }) {
     return unsubscribe;
   }, []);
 
+  // Email-to-role mapping fallback for demo/pre-configured accounts
+  const getRoleFromEmail = (email) => {
+    const map = {
+      'callcenter@wobble.com': 'callcenter',
+      'service@wobble.com': 'service',
+      'warehouse@wobble.com': 'warehouse',
+      'admin@wobble.com': 'admin',
+      'sales@wobble.com': 'sales',
+    };
+    return map[email] || 'callcenter';
+  };
+
   const login = async (email, password) => {
     try {
       const result = await signInWithEmailAndPassword(auth, email, password);
       const userDoc = await getDoc(doc(db, 'users', result.user.uid));
-      let userRole = 'callcenter';
+      let userRole = getRoleFromEmail(result.user.email);
       let userName = result.user.email;
       if (userDoc.exists()) {
-        userRole = userDoc.data().role;
-        userName = userDoc.data().name || userName;
+        const data = userDoc.data();
+        // Prefer Firestore role if set, otherwise use email mapping
+        userRole = data.role || userRole;
+        userName = data.name || userName;
       }
+      setRole(userRole);
+      setUser({ ...result.user, role: userRole, name: userName });
       toast.success(`Welcome ${userName}`);
       return { success: true, role: userRole };
     } catch (error) {
@@ -57,6 +73,7 @@ export function AuthProvider({ children }) {
   const logout = async () => {
     await signOut(auth);
     toast.success('Logged out');
+    window.location.href = '/login';
   };
 
   const value = { user, role, login, logout, loading };

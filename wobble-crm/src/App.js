@@ -15,12 +15,19 @@ import PartRequestApproval from './pages/PartRequestApproval';
 import WarehouseDispatch from './pages/WarehouseDispatch';
 import Reports from './pages/Reports';
 import AdminDashboard from './pages/AdminDashboard';
+import SalesActivation from './pages/SalesActivation';
+import SalesDashboard from './pages/SalesDashboard';
+import BulkUpload from './pages/BulkUpload';
+import CallCenterActivationSearch from './pages/CallCenterActivationSearch';
+import ActivationSearch from './pages/ActivationSearch';
+import WarrantyRequest from './pages/WarrantyRequest';
+import WarrantyActivation from './pages/WarrantyActivation';
 
 function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <Toaster position="top-right" toastOptions={{ style: { background: '#1e293b', color: '#fff' } }} />
+        <Toaster position="top-right" />
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/" element={<Navigate to="/dashboard" />} />
@@ -34,6 +41,15 @@ function App() {
           <Route path="/admin/dashboard" element={<ProtectedRoute allowedRoles={['admin']}><Layout><AdminDashboard /></Layout></ProtectedRoute>} />
           <Route path="/reports" element={<ProtectedRoute allowedRoles={['admin']}><Layout><Reports /></Layout></ProtectedRoute>} />
           <Route path="/warehouse/dispatch" element={<ProtectedRoute allowedRoles={['warehouse','admin']}><Layout><WarehouseDispatch /></Layout></ProtectedRoute>} />
+          <Route path="/sales/activate" element={<ProtectedRoute allowedRoles={['admin','sales']}><Layout><SalesActivation /></Layout></ProtectedRoute>} />
+          <Route path="/sales/bulk-upload" element={<ProtectedRoute allowedRoles={['admin','sales']}><Layout><BulkUpload /></Layout></ProtectedRoute>} />
+          <Route path="/activation/search" element={<ProtectedRoute allowedRoles={['callcenter','admin']}><Layout><CallCenterActivationSearch /></Layout></ProtectedRoute>} />
+          <Route path="/warranty/request" element={<ProtectedRoute allowedRoles={['callcenter','admin']}><Layout><WarrantyRequest /></Layout></ProtectedRoute>} />
+          <Route path="/warranty/activate" element={<ProtectedRoute allowedRoles={['admin']}><Layout><WarrantyActivation /></Layout></ProtectedRoute>} />
+          <Route path="/sales/dashboard" element={<ProtectedRoute allowedRoles={['admin','sales']}><Layout><SalesDashboard /></Layout></ProtectedRoute>} />
+          <Route path="/sales/search" element={<ProtectedRoute allowedRoles={['admin','sales']}><Layout><ActivationSearch /></Layout></ProtectedRoute>} />
+          <Route path="/admin/bulk-upload" element={<ProtectedRoute allowedRoles={['admin']}><Layout><BulkUpload /></Layout></ProtectedRoute>} />
+          <Route path="/admin/centers" element={<ProtectedRoute allowedRoles={['admin']}><Navigate to="/admin/dashboard" /></ProtectedRoute>} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>
