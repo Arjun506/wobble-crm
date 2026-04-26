@@ -16,12 +16,16 @@ import WarehouseDispatch from './pages/WarehouseDispatch';
 import Reports from './pages/Reports';
 import AdminDashboard from './pages/AdminDashboard';
 import SalesActivation from './pages/SalesActivation';
+<<<<<<< HEAD
 import SalesDashboard from './pages/SalesDashboard';
 import BulkUpload from './pages/BulkUpload';
 import CallCenterActivationSearch from './pages/CallCenterActivationSearch';
 import ActivationSearch from './pages/ActivationSearch';
 import WarrantyRequest from './pages/WarrantyRequest';
 import WarrantyActivation from './pages/WarrantyActivation';
+=======
+import CallCenterWarranty from './pages/CallCenterWarranty';
+>>>>>>> e409aaa74fa91e2e2150a69928ec806d823dab1c
 
 function App() {
   return (
@@ -40,7 +44,22 @@ function App() {
           <Route path="/admin/approvals" element={<ProtectedRoute allowedRoles={['admin']}><Layout><PartRequestApproval /></Layout></ProtectedRoute>} />
           <Route path="/admin/dashboard" element={<ProtectedRoute allowedRoles={['admin']}><Layout><AdminDashboard /></Layout></ProtectedRoute>} />
           <Route path="/reports" element={<ProtectedRoute allowedRoles={['admin']}><Layout><Reports /></Layout></ProtectedRoute>} />
+<<<<<<< HEAD
+
+          {/* Warehouse */}
+          <Route path="/warehouse/dispatch" element={<ProtectedRoute allowedRoles={['warehouse', 'admin']}><Layout><WarehouseDispatch /></Layout></ProtectedRoute>} />
+
+          {/* Sales */}
+          <Route path="/sales/activation" element={<ProtectedRoute allowedRoles={['sales', 'admin']}><Layout><SalesActivation /></Layout></ProtectedRoute>} />
+
+          {/* Call Center */}
+          <Route path="/callcenter/warranty" element={<ProtectedRoute allowedRoles={['callcenter', 'admin']}><Layout><CallCenterWarranty /></Layout></ProtectedRoute>} />
+
+          {/* Fallback */}
+          <Route path="*" element={<Navigate to="/dashboard" />} />
+=======
           <Route path="/warehouse/dispatch" element={<ProtectedRoute allowedRoles={['warehouse','admin']}><Layout><WarehouseDispatch /></Layout></ProtectedRoute>} />
+<<<<<<< HEAD
           <Route path="/sales/activate" element={<ProtectedRoute allowedRoles={['admin','sales']}><Layout><SalesActivation /></Layout></ProtectedRoute>} />
           <Route path="/sales/bulk-upload" element={<ProtectedRoute allowedRoles={['admin','sales']}><Layout><BulkUpload /></Layout></ProtectedRoute>} />
           <Route path="/activation/search" element={<ProtectedRoute allowedRoles={['callcenter','admin']}><Layout><CallCenterActivationSearch /></Layout></ProtectedRoute>} />
@@ -50,6 +69,9 @@ function App() {
           <Route path="/sales/search" element={<ProtectedRoute allowedRoles={['admin','sales']}><Layout><ActivationSearch /></Layout></ProtectedRoute>} />
           <Route path="/admin/bulk-upload" element={<ProtectedRoute allowedRoles={['admin']}><Layout><BulkUpload /></Layout></ProtectedRoute>} />
           <Route path="/admin/centers" element={<ProtectedRoute allowedRoles={['admin']}><Navigate to="/admin/dashboard" /></ProtectedRoute>} />
+=======
+>>>>>>> fd5183b5975ac374407cecb5a86c0f8d48ac8cba
+>>>>>>> e409aaa74fa91e2e2150a69928ec806d823dab1c
         </Routes>
       </AuthProvider>
     </BrowserRouter>
