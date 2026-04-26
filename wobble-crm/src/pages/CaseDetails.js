@@ -138,7 +138,6 @@ export default function CaseDetails() {
     return diff;
   };
 
-<<<<<<< HEAD
   const getPreviewMessage = () => {
     if (!caseData) return '';
     const tpl = messageTemplates[selectedChannel][selectedTemplate];
@@ -183,8 +182,6 @@ export default function CaseDetails() {
   const handlePrintReceipt = () => {
     const printWindow = window.open('', '_blank');
     printWindow.document.write(`<html><head><title>Receipt - ${caseData.jobId}</title><style>body{font-family:'Segoe UI',Arial;padding:40px;background:white}.header{text-align:center;border-bottom:3px solid #3b82f6;padding-bottom:20px}.logo{font-size:28px;font-weight:bold}.case-id{background:#f1f5f9;padding:15px;border-radius:12px;margin:20px 0}.row{display:flex;margin:10px 0;padding:8px;border-bottom:1px solid #e2e8f0}.label{font-weight:bold;width:150px}</style></head><body><div class="header"><div class="logo">Wobble One CRM</div><div class="subtitle">Service Receipt</div></div><div class="case-id"><span>Case ID: ${caseData.jobId}</span></div><div class="details"><div class="row"><div class="label">Customer:</div><div>${caseData.customerName}</div></div><div class="row"><div class="label">Mobile:</div><div>${caseData.mobileNumber}</div></div><div class="row"><div class="label">Device:</div><div>${caseData.deviceModel || 'N/A'}</div></div><div class="row"><div class="label">Issue:</div><div>${caseData.issueType || 'N/A'}</div></div><div class="row"><div class="label">Status:</div><div>${caseData.jobStatus}</div></div><div class="row"><div class="label">Date:</div><div>${new Date().toLocaleString()}</div></div></div><div class="footer">Thank you for choosing Wobble One Service</div></body></html>`);
-=======
-<<<<<<< HEAD
     const handleAddNote = async () => {
         if (!newNote.trim()) {
             toast.error('Please enter a note');
@@ -234,11 +231,6 @@ export default function CaseDetails() {
     const handlePrintReceipt = () => {
         const printWindow = window.open('', '_blank');
         printWindow.document.write(`
-=======
-  const handlePrintReceipt = () => {
-    const printWindow = window.open('', '_blank');
-    printWindow.document.write(`
->>>>>>> fd5183b5975ac374407cecb5a86c0f8d48ac8cba
       <html>
         <head><title>Receipt - ${caseData.jobId}</title>
         <style>
@@ -272,7 +264,6 @@ export default function CaseDetails() {
         </body>
       </html>
     `);
->>>>>>> e409aaa74fa91e2e2150a69928ec806d823dab1c
     printWindow.document.close();
     printWindow.print();
   };
@@ -284,7 +275,6 @@ export default function CaseDetails() {
     printWindow.print();
   };
 
-<<<<<<< HEAD
     if (loading) {
         return <div className="flex justify-center items-center h-64"><div className="loading-spinner"></div></div>;
     }
@@ -454,35 +444,6 @@ export default function CaseDetails() {
                         <div className="flex gap-3"><button onClick={handleAddNote} className="btn-primary flex-1">Add</button><button onClick={() => setShowNotesModal(false)} className="btn-secondary flex-1">Cancel</button></div>
                     </div>
                 </div>
-=======
-  if (loading) {
-    return <div className="flex justify-center items-center h-64"><div className="loading-spinner"></div></div>;
-  }
-
-  if (!caseData) return null;
-
-  return (
-    <div className="max-w-7xl mx-auto">
-      <div className="bg-white rounded-2xl shadow-lg p-6 mb-6 border border-gray-200">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
-            <div className="flex items-center gap-3 flex-wrap">
-              <h2 className="text-2xl font-bold text-gray-800">Case Details</h2>
-              <span className={`badge ${getStatusBadge(caseData.jobStatus)}`}>{caseData.jobStatus}</span>
-            </div>
-            <div className="mt-3">
-              <p className="text-gray-500 text-sm">Case ID:</p>
-              <p className="text-2xl font-bold font-mono bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">{caseData.jobId}</p>
-            </div>
-            <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
-              <span className="flex items-center gap-1"><FiCalendar size={14} /> Registered: {new Date(caseData.caseRegisterDate).toLocaleDateString()}</span>
-              <span className="flex items-center gap-1"><FiClock size={14} /> {calculateDaysOld()} days old</span>
-            </div>
-          </div>
-          <div className="flex gap-3">
-            {role === 'admin' && (
-              <button onClick={() => navigate('/reports')} className="btn-primary flex items-center gap-2 text-sm"><FiDownload /> Export</button>
->>>>>>> fd5183b5975ac374407cecb5a86c0f8d48ac8cba
             )}
             <button onClick={() => setShowMessageModal(true)} className="btn-primary flex items-center gap-2 text-sm bg-green-600 hover:bg-green-700">
               <FiSend /> Send Message

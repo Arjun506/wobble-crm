@@ -1,14 +1,11 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-<<<<<<< HEAD
 import { 
   FiHome, FiSearch, FiPlusCircle, FiTool, FiCheckCircle, 
   FiPackage, FiBarChart2, FiUsers, FiLogOut, FiMenu, FiX, 
   FiSettings, FiArrowLeft, FiBox, FiUpload, FiUser, FiChevronRight
 } from 'react-icons/fi';
-=======
-<<<<<<< HEAD
 import { FiHome, FiSearch, FiPlusCircle, FiTool, FiCheckCircle, FiPackage, FiBarChart2, FiUsers, FiLogOut, FiMenu, FiX, FiSettings, FiArrowLeft, FiChevronLeft, FiMoreHorizontal, FiUser } from 'react-icons/fi';
 
 export default function Layout({ children }) {
@@ -42,9 +39,6 @@ export default function Layout({ children }) {
             ],
         };
         return [...common, ...(roleMap[role] || [])];
-=======
-import { FiHome, FiSearch, FiPlusCircle, FiTool, FiCheckCircle, FiPackage, FiBarChart2, FiUsers, FiLogOut, FiMenu, FiX, FiSettings, FiArrowLeft } from 'react-icons/fi';
->>>>>>> e409aaa74fa91e2e2150a69928ec806d823dab1c
 
 export default function Layout({ children }) {
   const { role, user, logout } = useAuth();
@@ -81,12 +75,10 @@ export default function Layout({ children }) {
         { name: 'Activate Device', path: '/sales/activate', icon: <FiBox size={20} /> },
         { name: 'Bulk Upload', path: '/sales/bulk-upload', icon: <FiUpload size={20} /> },
       ],
->>>>>>> fd5183b5975ac374407cecb5a86c0f8d48ac8cba
     };
     return [...common, ...(roleMap[role] || [])];
   };
 
-<<<<<<< HEAD
     const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
     const canGoBack = location.pathname !== '/dashboard' && location.pathname !== '/';
 
@@ -159,41 +151,6 @@ export default function Layout({ children }) {
                     <div className="animate-fadeIn">{children}</div>
                 </div>
             </main>
-=======
-  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
-  const canGoBack = location.pathname !== '/dashboard' && location.pathname !== '/';
-
-  const handleLogout = async () => {
-    await logout();
-    navigate('/login');
-  };
-
-  const userInitial = user?.email ? user.email.charAt(0).toUpperCase() : 'U';
-  const userDisplayName = user?.name || user?.email?.split('@')[0] || 'User';
-  const userRoleLabel = role ? role.charAt(0).toUpperCase() + role.slice(1) : 'User';
-
-  return (
-    <div className="min-h-screen bg-[#f0f5ff]">
-      {/* Mobile top bar */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-sm border-b border-gray-200 px-4 py-3 flex justify-between items-center lg:hidden">
-        <button onClick={toggleSidebar} className="p-2 rounded-lg bg-gray-100 text-gray-800 hover:bg-gray-200"><FiMenu size={20} /></button>
-        <div className="text-gray-800 font-bold">Wobble One</div>
-        <div className="relative">
-          <button onClick={() => setShowUserMenu(!showUserMenu)} className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center text-white font-bold">
-            {userInitial}
-          </button>
-          {showUserMenu && (
-            <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-200 py-2">
-              <div className="px-4 py-2 border-b border-gray-100">
-                <p className="text-sm text-gray-800">{userDisplayName}</p>
-                <p className="text-xs text-gray-500 capitalize">{role}</p>
-              </div>
-              <button onClick={handleLogout} className="w-full text-left px-4 py-2 text-red-500 hover:bg-red-50 flex items-center gap-2">
-                <FiLogOut /> Logout
-              </button>
-            </div>
-          )}
->>>>>>> fd5183b5975ac374407cecb5a86c0f8d48ac8cba
         </div>
       </div>
 
