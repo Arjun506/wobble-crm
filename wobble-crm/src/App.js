@@ -22,6 +22,7 @@ import CallCenterActivationSearch from './pages/CallCenterActivationSearch';
 import ActivationSearch from './pages/ActivationSearch';
 import WarrantyRequest from './pages/WarrantyRequest';
 import WarrantyActivation from './pages/WarrantyActivation';
+import CallCenterWarranty from './pages/CallCenterWarranty';
 
 function App() {
   return (
