@@ -4,7 +4,8 @@ import { collection, getDocs, updateDoc, doc, deleteDoc, addDoc, query, where } 
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import * as XLSX from 'xlsx';
 import toast from 'react-hot-toast';
-import { FiEdit2, FiTrash2, FiCheckCircle, FiXCircle, FiUsers, FiTool, FiAlertCircle, FiDownload, FiUpload } from 'react-icons/fi';
+import { FiEdit2, FiTrash2, FiCheckCircle, FiXCircle, FiUsers, FiTool, FiAlertCircle, FiDownload, FiUpload, FiFileText, FiMail, FiMessageCircle } from 'react-icons/fi';
+import WarrantyReceiptModal from '../components/WarrantyReceiptModal';
 
 export default function AdminDashboard() {
   const [cases, setCases] = useState([]);
@@ -15,6 +16,8 @@ export default function AdminDashboard() {
   const [editingCase, setEditingCase] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [warrantyRequests, setWarrantyRequests] = useState([]);
+  const [receiptModalOpen, setReceiptModalOpen] = useState(false);
+  const [selectedDevice, setSelectedDevice] = useState(null);
 
   useEffect(() => {
     fetchAllData();
@@ -97,13 +100,12 @@ export default function AdminDashboard() {
 
   const handleApproveWarranty = async (reqId, imei, extendedYears) => {
     try {
-      // Update device warranty in 'devices' collection
       const devicesSnap = await getDocs(query(collection(db, 'devices'), where('imei', '==', imei)));
       if (!devicesSnap.empty) {
         const deviceDoc = devicesSnap.docs[0];
         const currentExpiry = deviceDoc.data().warrantyExpiry ? new Date(deviceDoc.data().warrantyExpiry) : new Date();
         const newExpiry = new Date(currentExpiry);
-        newExpiry.setFullYear(newExpiry.getFullYear() + extendedYears);
+        newExpiry.setFullYear(newExpiry.getFullYear() + (extendedYears || 1));
         await updateDoc(doc(db, 'devices', deviceDoc.id), {
           extendedWarranty: true,
           warrantyExpiry: newExpiry.toISOString(),
@@ -122,6 +124,22 @@ export default function AdminDashboard() {
     await updateDoc(doc(db, 'warrantyRequests', reqId), { status: 'Rejected', rejectedAt: new Date().toISOString() });
     toast.success('Warranty request rejected');
     fetchAllData();
+  };
+
+  const handleGenerateReceipt = async (warrantyReq) => {
+    try {
+      const q = query(collection(db, 'devices'), where('imei', '==', warrantyReq.imei));
+      const snap = await getDocs(q);
+      if (!snap.empty) {
+        const device = { id: snap.docs[0].id, ...snap.docs[0].data() };
+        setSelectedDevice(device);
+        setReceiptModalOpen(true);
+      } else {
+        toast.error('Device not found');
+      }
+    } catch (error) {
+      toast.error('Failed to load device');
+    }
   };
 
   const handleBulkUpload = async (file) => {
@@ -171,6 +189,9 @@ export default function AdminDashboard() {
     } else if (type === 'partRequests') {
       exportData = partRequests.map(p => ({ 'Job ID': p.jobId, 'Part': p.partName, 'Quantity': p.quantity, 'Status': p.status }));
       filename = 'part_requests';
+    } else if (type === 'warranty') {
+      exportData = warrantyRequests.map(w => ({ 'IMEI': w.imei, 'Customer': w.customerName, 'Status': w.status, 'Request Date': w.requestDate ? new Date(w.requestDate).toLocaleDateString() : 'N/A' }));
+      filename = 'warranty_requests';
     }
     const ws = XLSX.utils.json_to_sheet(exportData);
     const wb = XLSX.utils.book_new();
@@ -184,6 +205,10 @@ export default function AdminDashboard() {
     { label: 'Open Cases', value: cases.filter(c => c.jobStatus === 'Open').length, icon: <FiAlertCircle />, color: 'green' },
     { label: 'Pending Approvals', value: partRequests.filter(p => p.status === 'Pending Approval').length, icon: <FiTool />, color: 'yellow' },
     { label: 'Total Users', value: users.length, icon: <FiUsers />, color: 'purple' },
+    { label: 'Pending Warranty', value: warrantyRequests.filter(w => w.status === 'Pending').length, icon: <FiFileText />, color: 'orange' },
+    { label: 'Approved Warranty', value: warrantyRequests.filter(w => w.status === 'Approved').length, icon: <FiCheckCircle />, color: 'teal' },
+    { label: 'Rejected Warranty', value: warrantyRequests.filter(w => w.status === 'Rejected').length, icon: <FiXCircle />, color: 'red' },
+    { label: 'In Warranty Devices', value: warrantyRequests.filter(w => w.status === 'Approved').length + cases.filter(c => c.warrantyStatus === 'In Warranty').length, icon: <FiFileText />, color: 'indigo' },
   ];
 
   return (
@@ -193,34 +218,42 @@ export default function AdminDashboard() {
         <p className="text-gray-500 mt-1">Full control – edit, delete, approve, export</p>
       </div>
 
+      {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {stats.map((stat, idx) => (
           <div key={idx} className={`bg-gradient-to-br from-${stat.color}-600 to-${stat.color}-700 rounded-2xl p-5 shadow-lg`}>
             <div className="flex justify-between items-start">
-              <div><p className="text-gray-700 text-sm">{stat.label}</p><p className="text-3xl font-bold text-gray-800">{stat.value}</p></div>
-              <div className="text-gray-500 text-2xl">{stat.icon}</div>
+              <div>
+                <p className="text-white/80 text-sm">{stat.label}</p>
+                <p className="text-3xl font-bold text-white">{stat.value}</p>
+              </div>
+              <div className="text-white/60 text-2xl">{stat.icon}</div>
             </div>
           </div>
         ))}
       </div>
 
+      {/* Export Buttons */}
       <div className="flex flex-wrap gap-3 mb-6">
         <button onClick={() => handleExport('cases')} className="btn-primary text-sm"><FiDownload /> All Cases</button>
         <button onClick={() => handleExport('open')} className="btn-secondary text-sm"><FiDownload /> Open</button>
         <button onClick={() => handleExport('pending')} className="btn-warning text-sm"><FiDownload /> Pending</button>
         <button onClick={() => handleExport('closed')} className="btn-secondary text-sm"><FiDownload /> Closed</button>
         <button onClick={() => handleExport('partRequests')} className="btn-primary text-sm"><FiDownload /> Part Requests</button>
+        <button onClick={() => handleExport('warranty')} className="btn-primary text-sm"><FiDownload /> Warranty</button>
         <label className="btn-secondary text-sm cursor-pointer"><FiUpload /> Bulk Upload Device<input type="file" accept=".xlsx,.xls" onChange={e => handleBulkUpload(e.target.files[0])} className="hidden" /></label>
       </div>
 
+      {/* Tabs */}
       <div className="flex gap-2 border-b border-white/10 mb-6">
         {['cases', 'partRequests', 'users', 'warrantyRequests', 'serviceCenters'].map(tab => (
           <button key={tab} onClick={() => setActiveTab(tab)} className={`px-6 py-3 font-semibold transition-all ${activeTab === tab ? 'text-blue-600 border-b-2 border-blue-400' : 'text-gray-500 hover:text-gray-600'}`}>
-            {tab === 'cases' ? '📋 Cases' : tab === 'partRequests' ? '🔧 Part Requests' : tab === 'users' ? '👥 Users' : tab === 'warrantyRequests' ? '🛡️ Warranty' : '🏢 Centers'}
+            {tab === 'cases' ? 'Cases' : tab === 'partRequests' ? 'Part Requests' : tab === 'users' ? 'Users' : tab === 'warrantyRequests' ? 'Warranty' : 'Centers'}
           </button>
         ))}
       </div>
 
+      {/* Cases Tab */}
       {activeTab === 'cases' && (
         <div className="card overflow-x-auto">
           <table className="w-full text-sm"><thead><tr><th>Job ID</th><th>Customer</th><th>Mobile</th><th>Status</th><th>Actions</th></tr></thead><tbody>
@@ -232,6 +265,7 @@ export default function AdminDashboard() {
         </div>
       )}
 
+      {/* Part Requests Tab */}
       {activeTab === 'partRequests' && (
         <div className="card overflow-x-auto">
           <table className="w-full text-sm"><thead><tr><th>Job ID</th><th>Part</th><th>Qty</th><th>Status</th><th>Actions</th></tr></thead><tbody>
@@ -246,12 +280,31 @@ export default function AdminDashboard() {
         </div>
       )}
 
+      {/* Warranty Requests Tab */}
       {activeTab === 'warrantyRequests' && (
         <div className="card overflow-x-auto">
-          <table className="w-full text-sm"><thead><tr><th>IMEI</th><th>Customer</th><th>Request Date</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+          <table className="w-full text-sm"><thead><tr><th>IMEI</th><th>Customer</th><th>Mobile</th><th>Request Date</th><th>Status</th><th>Actions</th></tr></thead><tbody>
             {warrantyRequests.map(w => (
-              <tr key={w.id}><td>{w.imei}</td><td>{w.customerName}</td><td>{new Date(w.requestDate).toLocaleDateString()}</td><td>{w.status}</td>
-              <td>{w.status === 'Pending' && <><button onClick={() => handleApproveWarranty(w.id, w.imei, w.extendedYears)} className="text-green-600 mr-2"><FiCheckCircle /></button><button onClick={() => handleRejectWarranty(w.id)} className="text-red-400"><FiXCircle /></button></>}</td></tr>
+              <tr key={w.id}>
+                <td className="font-mono">{w.imei}</td>
+                <td>{w.customerName}</td>
+                <td>{w.mobileNumber || 'N/A'}</td>
+                <td>{w.requestDate ? new Date(w.requestDate).toLocaleDateString() : 'N/A'}</td>
+                <td><span className={`badge ${w.status === 'Approved' ? 'badge-green' : w.status === 'Rejected' ? 'badge-red' : 'badge-yellow'}`}>{w.status}</span></td>
+                <td>
+                  {w.status === 'Pending' && (
+                    <>
+                      <button onClick={() => handleApproveWarranty(w.id, w.imei, w.extendedYears)} className="text-green-600 mr-2" title="Approve"><FiCheckCircle /></button>
+                      <button onClick={() => handleRejectWarranty(w.id)} className="text-red-400" title="Reject"><FiXCircle /></button>
+                    </>
+                  )}
+                  {w.status === 'Approved' && (
+                    <>
+                      <button onClick={() => handleGenerateReceipt(w)} className="text-indigo-600 mr-2" title="Generate Receipt"><FiFileText /></button>
+                    </>
+                  )}
+                </td>
+              </tr>
             ))}
           </tbody></table>
         </div>
@@ -270,6 +323,13 @@ export default function AdminDashboard() {
           </div>
         </div>
       )}
+
+      <WarrantyReceiptModal
+        isOpen={receiptModalOpen}
+        onClose={() => setReceiptModalOpen(false)}
+        deviceData={selectedDevice}
+      />
     </div>
   );
 }
+

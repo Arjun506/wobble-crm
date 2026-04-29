@@ -101,14 +101,11 @@ export default function CallCenterWarranty() {
     return (
         <div className="max-w-4xl mx-auto">
             <div className="mb-6">
-                <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
-                    Extended Warranty Activation
-                </h2>
+                <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">Extended Warranty Activation</h2>
                 <p className="text-slate-400">Activate 1+1 year extended warranty for customers</p>
             </div>
 
             <form onSubmit={handleSubmit} className="card">
-                {/* Step indicator */}
                 <div className="mb-6 flex justify-center">
                     <div className="flex items-center gap-4">
                         {[1, 2, 3].map((s) => (
@@ -117,9 +114,8 @@ export default function CallCenterWarranty() {
                             </div>
                         ))}
                     </div>
-                </div>
+                </div> {/* Closed steps indicator */}
 
-                {/* Step 1: IMEI */}
                 {step === 1 && (
                     <div>
                         <h3 className="text-lg font-semibold text-blue-400 mb-4">Enter IMEI</h3>
@@ -146,7 +142,6 @@ export default function CallCenterWarranty() {
                     </div>
                 )}
 
-                {/* Step 2: Customer Details */}
                 {step === 2 && (
                     <div>
                         <h3 className="text-lg font-semibold text-blue-400 mb-4">Customer Details</h3>
@@ -164,7 +159,6 @@ export default function CallCenterWarranty() {
                     </div>
                 )}
 
-                {/* Step 3: Warranty Extension */}
                 {step === 3 && (
                     <div>
                         <h3 className="text-lg font-semibold text-blue-400 mb-4">Warranty Extension</h3>

@@ -192,3 +192,58 @@ export const templateLabels = {
   custom: 'Custom Message',
 };
 
+/**
+ * Send warranty receipt certificate via Email
+ * @param {object} deviceData - device object with customer info
+ */
+export const sendWarrantyReceiptEmail = async (deviceData) => {
+  const { email, customerName, imei, extendedWarranty, warrantyExpiry, purchaseDate } = deviceData;
+  if (!email) return { success: false, error: 'No email' };
+  const certId = `WBL-WARRANTY-${imei?.slice(-6) || 'XXXXXX'}-${Date.now().toString().slice(-4)}`;
+  const endDate = warrantyExpiry ? new Date(warrantyExpiry).toLocaleDateString('en-IN') : 'N/A';
+  const startDate = purchaseDate ? new Date(purchaseDate).toLocaleDateString('en-IN') : 'N/A';
+  const warrantyType = extendedWarranty ? 'Extended (2 Years)' : 'Standard (1 Year)';
+
+  const subject = `Your Wobble One Warranty Certificate - ${customerName}`;
+  const plainText = `Dear ${customerName},\n\nYour Wobble One warranty is now active!\n\nCertificate ID: ${certId}\nIMEI: ${imei}\nWarranty Type: ${warrantyType}\nValid From: ${startDate}\nValid Until: ${endDate}\n\nThank you for choosing Wobble One.`;
+
+  return sendEmail(email, subject, plainText, {
+    certificate_id: certId,
+    customer_name: customerName,
+    imei,
+    warranty_type: warrantyType,
+    valid_until: endDate,
+  });
+};
+
+/**
+ * Send warranty receipt certificate via WhatsApp
+ * @param {object} deviceData - device object with customer info
+ */
+export const sendWarrantyReceiptWhatsApp = async (deviceData) => {
+  const { mobileNumber, customerName, imei, extendedWarranty, warrantyExpiry } = deviceData;
+  if (!mobileNumber) return { success: false, error: 'No mobile number' };
+  const certId = `WBL-WARRANTY-${imei?.slice(-6) || 'XXXXXX'}-${Date.now().toString().slice(-4)}`;
+  const endDate = warrantyExpiry ? new Date(warrantyExpiry).toLocaleDateString('en-IN') : 'N/A';
+  const warrantyType = extendedWarranty ? 'Extended (2 Years)' : 'Standard (1 Year)';
+
+  const message = `*Wobble One Warranty Certificate*\n\nDear ${customerName},\n\nYour warranty is now active!\n\nCert ID: *${certId}*\nIMEI: *${imei}*\nType: *${warrantyType}*\nValid Until: *${endDate}*\n\nThank you for choosing Wobble One!`;
+
+  return sendWhatsApp(mobileNumber, message, certId);
+};
+
+/**
+ * Send warranty receipt via all available channels
+ * @param {object} deviceData
+ */
+export const sendWarrantyReceiptAll = async (deviceData) => {
+  const results = { email: null, whatsapp: null };
+  if (deviceData.email) {
+    results.email = await sendWarrantyReceiptEmail(deviceData);
+  }
+  if (deviceData.mobileNumber) {
+    results.whatsapp = await sendWarrantyReceiptWhatsApp(deviceData);
+  }
+  return results;
+};
+

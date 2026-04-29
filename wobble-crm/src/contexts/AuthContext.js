@@ -36,7 +36,6 @@ export function AuthProvider({ children }) {
     return unsubscribe;
   }, []);
 
-  // Email-to-role mapping fallback for demo/pre-configured accounts
   const getRoleFromEmail = (email) => {
     const map = {
       'callcenter@wobble.com': 'callcenter',
@@ -56,13 +55,12 @@ export function AuthProvider({ children }) {
       let userName = result.user.email;
       if (userDoc.exists()) {
         const data = userDoc.data();
-        // Prefer Firestore role if set, otherwise use email mapping
         userRole = data.role || userRole;
         userName = data.name || userName;
       }
       setRole(userRole);
       setUser({ ...result.user, role: userRole, name: userName });
-      toast.success(`Welcome ${userName}`);
+      toast.success('Welcome ' + userName);
       return { success: true, role: userRole };
     } catch (error) {
       toast.error(error.message);

@@ -252,6 +252,15 @@ button,
   background-color: #475569;
 }
 
+/* Header and button text visibility fix */
+.header-text, h1, h2, h3 {
+  color: #111827 !important;
+}
+
+.btn-secondary {
+  color: #111827 !important;
+}
+
 /* Responsive Table Wrapper */
 .table-wrapper {
   overflow-x: auto;
